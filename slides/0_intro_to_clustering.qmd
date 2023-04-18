@@ -1,0 +1,116 @@
+---
+title: "Introduction to Clustering and Classifiction"
+subtitle: "ESS 523c"
+author: "B Steele"
+institute: 'ROSSyndicate'
+date: today
+date-format: long
+format: 
+  revealjs:
+    theme: [sky, custom.scss]
+    transition: fade
+    fig-align: center
+editor: visual
+---
+
+# Clustering Methods Overview
+
+::: notes
+Clustering is an *unsupervised* learning method.
+
+Overall, it's a process to find **meaningful** structure in a dataset
+:::
+
+## \[some\] Types of clustering
+
+::: incremental
+-   partition clustering
+
+-   hierarchical clustering
+
+-   density-based clustering
+
+-   model-based clustering
+:::
+
+::: notes
+at least that is broadly applicable to this group
+:::
+
+## Partition Clustering
+
+TL;DR: you define how many classes there are, and clustering prioritizes minimizing the dissimilarity between points.
+
+::: {.fragment .incremental}
+[![k-means clustering example from towardsdatascience.com](https://miro.medium.com/v2/resize:fit:960/1*KrcZK0xYgTa4qFrVr0fO2w.gif){fig-align="center"}](https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68)
+:::
+
+## Hierarchical clustering
+
+TL;DR: you define measures of similarity and either iteratively merge (agglomeritive) or iteratively split (divisive) to create a hierarchy.
+
+::: {.fragment .incremental}
+[![agglomeritive hierarchical clustering example from towardsdatacience.com](https://miro.medium.com/v2/resize:fit:1400/1*ET8kCcPpr893vNZFs8j4xg.gif)](https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68)
+:::
+
+## Density-based clustering
+
+TL;DR: computer defines areas of high density separated by areas of low density
+
+[![DBSCAN example from towardsdatascience.com](https://miro.medium.com/v2/resize:fit:1350/1*tc8UF-h0nQqUfLC8-0uInQ.gif)](https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68)
+
+# How do we account for space/distance?
+
+::: {.fragment .incremental}
+replace 'similarity' with 'distance':
+
+-   you define how many classes there are, and clustering prioritizes minimizing the **distance** between points.
+
+-   you define measures of **distance** and either iteratively merge (agglomeritive) or iteratively split (divisive) to create a hierarchy.
+:::
+
+::: notes
+but here, distance not only means distance means both spatial distance AND similarity on other dimensions
+:::
+
+# Evaluation metrics \[commonly used with k-means\]
+
+::: incremental
+-   silhouette coefficient
+
+-   Davies-Boudin index / Calinski-Harabasz Index
+:::
+
+::: notes
+SC: computing the average distance between data points in the same cluster and the average distance between data points in different clusters (values for -1 to 1, higher the better)
+
+DBI: measures the average similarity between each cluster and its most similar cluster, while also taking into account the average dissimilarity within each cluster. The lower the value the better
+
+CHI: measures the ratio of the between-cluster variance to the within-cluster variance. The higher the ratio, the better.
+
+The focus here is to help define what is **meaningful**.
+:::
+
+# The 'Problem' with unsupervised clustering
+
+[![comparison of clustering methods from SciKit Learn](https://scikit-learn.org/stable/_images/sphx_glr_plot_cluster_comparison_001.png){fig-align="center"}](https://scikit-learn.org/)
+
+::: notes
+what do you notice about the second to last line?
+:::
+
+# Introducing our Ecological Question
+
+::: {.fragment .incremental .smaller}
+-   Can we define the area of the Ocean off the coast of California impacted by sediment plumes from the overwhelming precipitation events of the recent past?
+
+-   within the context of the Landsat mission's history, has this ever happened before?
+:::
+
+# 
+
+[![coastal flooding via \@USGSLandsat](images/california_plume_usgslandsat.jpeg){fig-align="center"}](https://pbs.twimg.com/media/Fm3OfdyWAAAl3cA?format=jpg&name=large)
+
+# Resources
+
+-   [Spatial Clustering *in* Handbook of Applied Spatial Analysis, J. Aldstadt, 2009](https://link.springer.com/chapter/10.1007/978-3-642-03647-7_15)
