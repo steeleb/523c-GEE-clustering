@@ -4,9 +4,6 @@
 // GENERAL TOGGLES!
 ////////////////////////////////////////////////////////////
 
-// INPUT AN IMAGE (1-5)
-var whichImage = 2; // will be used to select among images
-
 // CLOUD THRESHOLD (value of 0-100)
 var cloudThreshold = 100;
 
@@ -14,7 +11,7 @@ var cloudThreshold = 100;
 var numberOfUnsupervisedClusters = 4;
 
 // USE SNIC? (yes or no)
-var SNIC = 'no';
+var SNIC = 'yes';
 
 // specify alternative scale for SNIC clustering - minimum 50
 var altScale = 100;
@@ -70,7 +67,6 @@ var waterOnly = function(image) {
   // Apply the mask to the image and return
   return image.updateMask(mask);
 };
-
 
 ////////////////////////////////////////////////////////////
 // 1. Functions for kmeans
@@ -159,136 +155,122 @@ var bandMaxes = [1, 1, 1];
 var drawMin = 0;
 var drawMax = 0.3;
 
+var sceneList = ['20230124T185649_20230124T185652_T10SEF',
+                        '20230218T185431_20230218T190049_T10SEF',
+                        '20230315T185139_20230315T185257_T10SEF',
+                        '20230325T185029_20230325T185655_T10SEF',
+                        '20230330T184951_20230330T190411_T10SEF'];
 
-// 3.1  Selecting Image to Classify 
-if (whichImage == 1) {
+// Create the dropdown options
+var dropdown = ui.Select({
+  items: sceneList,
+  onChange: function(selected) {
+    Map.layers().reset();
     var whichCollection = 'COPERNICUS/S2_SR_HARMONIZED';
-    var ImageToUseID = '20230124T185649_20230124T185652_T10SEF';
+    var ImageToUseID = selected;
     var originalImage = ee.Image(whichCollection + '/' + ImageToUseID);
     var maskedImage = maskS2clouds(originalImage);
     maskedImage = waterOnly(maskedImage);
     var defaultStudyArea = originalImage.geometry();
     var zoomArea = defaultStudyArea.centroid();
     print(ImageToUseID, originalImage);
-    } else if (whichImage == 2) {
-    var whichCollection = 'COPERNICUS/S2_SR_HARMONIZED';
-    var ImageToUseID = '20230218T185431_20230218T190049_T10SEF';
-    var originalImage = ee.Image(whichCollection + '/' + ImageToUseID);
-    var maskedImage = maskS2clouds(originalImage);
-    maskedImage = waterOnly(maskedImage);
-    var defaultStudyArea = originalImage.geometry();
-    var zoomArea = defaultStudyArea.centroid();
-    } else if (whichImage == 3) {
-    var whichCollection = 'COPERNICUS/S2_SR_HARMONIZED';
-    var ImageToUseID = '20230315T185139_20230315T185257_T10SEF';
-    var originalImage = ee.Image(whichCollection + '/' + ImageToUseID);
-    var maskedImage = maskS2clouds(originalImage);
-    maskedImage = waterOnly(maskedImage);
-    var defaultStudyArea = originalImage.geometry();
-    var zoomArea = defaultStudyArea.centroid();
-    } else if (whichImage == 4) {
-    var whichCollection = 'COPERNICUS/S2_SR_HARMONIZED';
-    var ImageToUseID = '20230325T185029_20230325T185655_T10SEF';
-    var originalImage = ee.Image(whichCollection + '/' + ImageToUseID);
-    var maskedImage = maskS2clouds(originalImage);
-    maskedImage = waterOnly(maskedImage);
-    var defaultStudyArea = originalImage.geometry();
-    var zoomArea = defaultStudyArea.centroid();
-    } else if (whichImage == 5) {
-    var whichCollection = 'COPERNICUS/S2_SR_HARMONIZED';
-    var ImageToUseID = '20230330T184951_20230330T190411_T10SEF';
-    var originalImage = ee.Image(whichCollection + '/' + ImageToUseID);
-    var maskedImage = maskS2clouds(originalImage);
-    maskedImage = waterOnly(maskedImage);
-    var defaultStudyArea = originalImage.geometry();
-    var zoomArea = defaultStudyArea.centroid();
-    } 
+    Map.addLayer(maskedImage.select(threeBandsToDraw), {
+      min: 0,
+      max: 0.2
+      }, '3.1 ' + ImageToUseID, true, 1);
 
-Map.addLayer(maskedImage.select(threeBandsToDraw), {
-  min: 0,
-  max: 0.2
-}, '3.1 ' + ImageToUseID, true, 1);
-
-////////////////////////////////////////////////////////////
-// 4. Image Pre-processing 
-////////////////////////////////////////////////////////////
-var clippedImageSelectedBands = maskedImage
-    .select(bandsToUse);
-var ImageToUse = afn_normalize_by_maxes(clippedImageSelectedBands, bandMaxes);
-
-////////////////////////////////////////////////////////////
-// 5. SNIC Clustering
-////////////////////////////////////////////////////////////
-
-// This function returns a multi-banded image that has had SNIC
-// applied to it. It automatically determine the new names 
-// of the bands that will be returned from the segmentation.
-var SNIC_MultiBandedResults = afn_SNIC(
-    ImageToUse,
-    SNIC_SuperPixelSize,
-    SNIC_Compactness,
-    SNIC_Connectivity,
-    SNIC_NeighborhoodSize,
-    SNIC_SeedShape
-);
-
-var SNIC_MultiBandedResults = SNIC_MultiBandedResults
-    .reproject('EPSG:3857', null, processScale);
-
-if (SNIC === 'yes') {
-Map.addLayer(SNIC_MultiBandedResults.select('clusters')
-    .randomVisualizer(), {}, '5.3 SNIC Segment Clusters', true, 1);
-}
-
-if (SNIC === 'yes') {
-  var theSeeds = SNIC_MultiBandedResults.select('seeds');
-  Map.addLayer(theSeeds, {
-      palette: 'red'
-  }, '5.4 Seed points of clusters', true, 1);
-}
-
-var bandMeansToDraw = threeBandsToDraw.map(afn_addMeanToBandName);
-
-var clusterMeans = SNIC_MultiBandedResults.select(bandMeansToDraw);
-
-if (SNIC === 'yes') {
-  Map.addLayer(clusterMeans, {
-      min: drawMin,
-      max: drawMax
-  }, '5.7 Image repainted by segments', true, 0);
-}
-
-////////////////////////////////////////////////////////////
-// 6. Execute Classifications
-////////////////////////////////////////////////////////////
-
-// 6.1 Per Pixel Unsupervised Classification for Comparison
-var PerPixelUnsupervised = afn_Kmeans(ImageToUse,
-    numberOfUnsupervisedClusters, 
-    defaultStudyArea,
-    processScale);
-Map.addLayer(PerPixelUnsupervised.select('unsupervisedClass')
-    .randomVisualizer(), {}, '6.1 Per-Pixel Unsupervised', true, 0
+    ////////////////////////////////////////////////////////////
+    // 4. Image Pre-processing 
+    ////////////////////////////////////////////////////////////
+    var clippedImageSelectedBands = maskedImage
+        .select(bandsToUse);
+    var ImageToUse = afn_normalize_by_maxes(clippedImageSelectedBands, bandMaxes);
+    
+    ////////////////////////////////////////////////////////////
+    // 5. SNIC Clustering
+    ////////////////////////////////////////////////////////////
+    
+    // This function returns a multi-banded image that has had SNIC
+    // applied to it. It automatically determine the new names 
+    // of the bands that will be returned from the segmentation.
+    var SNIC_MultiBandedResults = afn_SNIC(
+        ImageToUse,
+        SNIC_SuperPixelSize,
+        SNIC_Compactness,
+        SNIC_Connectivity,
+        SNIC_NeighborhoodSize,
+        SNIC_SeedShape
     );
+    
+    var SNIC_MultiBandedResults = SNIC_MultiBandedResults
+        .reproject('EPSG:3857', null, processScale);
+    
+    if (SNIC === 'yes') {
+    Map.addLayer(SNIC_MultiBandedResults.select('clusters')
+        .randomVisualizer(), {}, '5.3 SNIC Segment Clusters', true, 1);
+    }
+    
+    if (SNIC === 'yes') {
+      var theSeeds = SNIC_MultiBandedResults.select('seeds');
+      Map.addLayer(theSeeds, {
+          palette: 'red'
+      }, '5.4 Seed points of clusters', true, 1);
+    }
+    
+    var bandMeansToDraw = threeBandsToDraw.map(afn_addMeanToBandName);
+    
+    var clusterMeans = SNIC_MultiBandedResults.select(bandMeansToDraw);
+    
+    if (SNIC === 'yes') {
+      Map.addLayer(clusterMeans, {
+          min: drawMin,
+          max: drawMax
+      }, '5.7 Image repainted by segments', true, 0);
+    }
+    
+    ////////////////////////////////////////////////////////////
+    // 6. Execute Classifications
+    ////////////////////////////////////////////////////////////
+    
+    // 6.1 Per Pixel Unsupervised Classification for Comparison
+    var PerPixelUnsupervised = afn_Kmeans(ImageToUse,
+        numberOfUnsupervisedClusters, 
+        defaultStudyArea,
+        processScale);
+        
+    Map.addLayer(PerPixelUnsupervised.select('unsupervisedClass')
+      .randomVisualizer(), {}, '6.1 Per-Pixel Unsupervised', true, 0
+      );
+    
+    
+    // 6.2 SNIC Unsupervised Classification for Comparison
+    var bandMeansNames = bandsToUse.map(afn_addMeanToBandName);
+    
+    var meanSegments = SNIC_MultiBandedResults.select(bandMeansNames);
+    var SegmentUnsupervised = afn_Kmeans(meanSegments,
+        numberOfUnsupervisedClusters, defaultStudyArea,
+        processScale);
+    
+    if (SNIC === 'yes') {
+        Map.addLayer(SegmentUnsupervised.randomVisualizer(), {},
+        '6.3 SNIC Clusters Unsupervised', true, 0);
+        }
+        
+    ////////////////////////////////////////////////////////////
+    // 7. Zoom if requested
+    ////////////////////////////////////////////////////////////
+    if (centerObjectYN === true) {
+        Map.centerObject(zoomArea, 10);
+    }
+  }
+});
 
-// 6.2 SNIC Unsupervised Classification for Comparison
-var bandMeansNames = bandsToUse.map(afn_addMeanToBandName);
 
-var meanSegments = SNIC_MultiBandedResults.select(bandMeansNames);
-var SegmentUnsupervised = afn_Kmeans(meanSegments,
-    numberOfUnsupervisedClusters, defaultStudyArea,
-    processScale);
 
-if (SNIC === 'yes') {
-  Map.addLayer(SegmentUnsupervised.randomVisualizer(), {},
-      '6.3 SNIC Clusters Unsupervised', true, 0);
-}
+dropdown.style().set({
+  position: 'top-right'
+});
 
-////////////////////////////////////////////////////////////
-// 7. Zoom if requested
-////////////////////////////////////////////////////////////
-if (centerObjectYN === true) {
-    Map.centerObject(zoomArea, 10);
-}
-
+// Add the dropdown to the map
+Map.add(dropdown);
 
