@@ -101,6 +101,10 @@ Adding additional layers
 commonly used to show plant/crop health. grey are built up areas, red are veg-heavy areas.
 :::
 
+# Getting back to our ecological question
+
+Go to [https://github.com/steeleb/523c-GEE-clustering](https://github.com/steeleb/523c-GEE-clusteringhttps://github.com/steeleb/523c-GEE-clustering)
+
 # Resources
 
 -   [Three-band Sentinel image composite](https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/composites/) examples
