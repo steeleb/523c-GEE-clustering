@@ -1,0 +1,108 @@
+---
+title: "Introduction to Google Earth Engine"
+subtitle: "ESS 523c"
+author: "B Steele"
+institute: 'ROSSyndicate'
+date: today
+date-format: long
+format: 
+  revealjs:
+    theme: [sky, custom.scss]
+    transition: fade
+    fig-align: center
+editor: visual
+---
+
+# Initial Set Up
+
+Sign up for Google Earth Engine: <https://earthengine.google.com/>.
+
+-   use your CSU google email address, unless you're already using GEE through a different email.
+
+-   You will be prompted to make a home folder. You can't change this, but you can make more folders.
+
+# Working in the Code Editor
+
+The EE code editor: <https://code.earthengine.google.com/>
+
+::: incremental
+-   EE code is written in javascript
+
+    > print('Hello World!');
+
+-   there are many code examples already baked in to the code editor.
+
+-   in the top left area of the screen, navigate to the 'Examples' area, then click on the 'Sentinel' option
+:::
+
+::: notes
+explain syntax here; walk through the Sentinel example
+:::
+
+# Filtering image collections
+
+Lines 27-31:
+
+> var collection = ee.ImageCollection('COPERNICUS/S2')
+>
+> > .filterDate('2016-01-01', '2016-12-31')
+> >
+> > // Pre-filter to get less cloudy granules.
+> >
+> > .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+> >
+> > .map(maskS2clouds);
+
+# Masking images {.smaller}
+
+Masking is a method of filtering an image pixel-by-pixel
+
+Lines 8 -23:
+
+> function maskS2clouds(image) {
+>
+> > var qa = image.select('QA60');
+> >
+> > // Bits 10 and 11 are clouds and cirrus, respectively.
+> >
+> > var cloudBitMask = 1 \<\< 10;
+> >
+> > var cirrusBitMask = 1 \<\< 11;
+> >
+> > // Both flags should be set to zero, indicating clear conditions.
+> >
+> > var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(
+> >
+> > > qa.bitwiseAnd(cirrusBitMask).eq(0));
+> >
+> > // Return the masked and scaled data, without the QA bands.
+> >
+> > return image.updateMask(mask).divide(10000)
+> >
+> > > .select("B.\*")
+> > >
+> > > .copyProperties(image, \["system:time_start"\]);
+>
+> }
+
+# Displaying data in the map
+
+Line 36:
+
+> Map.addLayer(composite, {bands: \['B4', 'B3', 'B2'\], min: 0, max: 0.3}, 'RGB');
+
+::: fragment
+Adding additional layers
+
+> Map.addLayer(composite, {bands: \['B8', 'B4', 'B3'\], min: 0, max: 0.3}, 'False Color');
+:::
+
+::: notes
+commonly used to show plant/crop health. grey are built up areas, red are veg-heavy areas.
+:::
+
+# Resources
+
+-   [Three-band Sentinel image composite](https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/composites/) examples
+
+-   [Cloud-Based Remote Sensing with Google Earth Engine](https://www.eefabook.org/)

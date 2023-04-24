@@ -16,9 +16,11 @@ editor: visual
 # Clustering Methods Overview
 
 ::: notes
-Clustering is an *unsupervised* learning method.
+Today we're going to go over clustering methods in relation to remote sensing data. But really this can be broadly applied to many data types.
 
-Overall, it's a process to find **meaningful** structure in a dataset
+Clustering is an *unsupervised* machine learning method. This just means that we allow the computer to do most of the work in clustering.
+
+Overall, it's a process to find **meaningful** structure in a dataset.
 :::
 
 ## \[some\] Types of clustering
@@ -45,6 +47,10 @@ TL;DR: you define how many classes there are, and clustering prioritizes minimiz
 [![k-means clustering example from towardsdatascience.com](https://miro.medium.com/v2/resize:fit:960/1*KrcZK0xYgTa4qFrVr0fO2w.gif){fig-align="center"}](https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68)
 :::
 
+::: notes
+as with most machine learning models, the k-means is an iterative process. The first step are random 'locations' in two-dimensional space. then, we iterate to minimizing dissimilarity, where the 'locations' are moving over each iteration
+:::
+
 ## Hierarchical clustering
 
 TL;DR: you define measures of similarity and either iteratively merge (agglomeritive) or iteratively split (divisive) to create a hierarchy.
@@ -53,13 +59,23 @@ TL;DR: you define measures of similarity and either iteratively merge (agglomeri
 [![agglomeritive hierarchical clustering example from towardsdatacience.com](https://miro.medium.com/v2/resize:fit:1400/1*ET8kCcPpr893vNZFs8j4xg.gif)](https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68)
 :::
 
+::: notes
+divisive: if we were dividing this class by hair color - brown/black; blonde; red
+
+agglomerative: we could do this by height - the folks who are the most similar in height are grouped together first
+:::
+
 ## Density-based clustering
 
 TL;DR: computer defines areas of high density separated by areas of low density
 
 [![DBSCAN example from towardsdatascience.com](https://miro.medium.com/v2/resize:fit:1350/1*tc8UF-h0nQqUfLC8-0uInQ.gif)](https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68)
 
-# How do we account for space/distance?
+::: notes
+not commonly used except in spatial applications and image segmentation.
+:::
+
+# Another way to think about similarity...
 
 ::: {.fragment .incremental}
 replace 'similarity' with 'distance':
@@ -67,10 +83,6 @@ replace 'similarity' with 'distance':
 -   you define how many classes there are, and clustering prioritizes minimizing the **distance** between points.
 
 -   you define measures of **distance** and either iteratively merge (agglomeritive) or iteratively split (divisive) to create a hierarchy.
-:::
-
-::: notes
-but here, distance not only means distance means both spatial distance AND similarity on other dimensions
 :::
 
 # Evaluation metrics \[commonly used with k-means\]
@@ -101,10 +113,10 @@ what do you notice about the second to last line?
 
 # Introducing our Ecological Question
 
-::: {.fragment .incremental .smaller}
--   Can we define the area of the Ocean off the coast of California impacted by sediment plumes from the overwhelming precipitation events of the recent past?
+::: {.incremental .smaller}
+-   Can we define the area of the Ocean off the coast of California impacted by sediment plumes from the overwhelming (and destrictive) precipitation events of the recent past?
 
--   within the context of the Landsat mission's history, has this ever happened before?
+-   how can we consistently label satellite imagery to track sediment plumes?
 :::
 
 # 

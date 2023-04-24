@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="0_intro_to_clustering_files/libs/clipboard/clipboard.min.js"></script>
-<script src="0_intro_to_clustering_files/libs/quarto-html/tabby.min.js"></script>
-<script src="0_intro_to_clustering_files/libs/quarto-html/popper.min.js"></script>
-<script src="0_intro_to_clustering_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="0_intro_to_clustering_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="0_intro_to_clustering_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="0_intro_to_clustering_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<script src="1_intro_to_GEE_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_intro_to_GEE_files/libs/quarto-html/tabby.min.js"></script>
+<script src="1_intro_to_GEE_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_intro_to_GEE_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="1_intro_to_GEE_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_intro_to_GEE_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="1_intro_to_GEE_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.2.335">
 
   <meta name="author" content="B Steele">
   <meta name="dcterms.date" content="2023-04-24">
-  <title>Introduction to Clustering and Classifiction</title>
+  <title>Introduction to Google Earth Engine</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="0_intro_to_clustering_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="0_intro_to_clustering_files/libs/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="1_intro_to_GEE_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="1_intro_to_GEE_files/libs/revealjs/dist/reveal.css">
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -30,11 +30,11 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="0_intro_to_clustering_files/libs/revealjs/dist/theme/quarto.css" id="theme">
-  <link href="0_intro_to_clustering_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="0_intro_to_clustering_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="0_intro_to_clustering_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="0_intro_to_clustering_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <link rel="stylesheet" href="1_intro_to_GEE_files/libs/revealjs/dist/theme/quarto.css" id="theme">
+  <link href="1_intro_to_GEE_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="1_intro_to_GEE_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="1_intro_to_GEE_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="1_intro_to_GEE_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
 
   .callout {
@@ -325,7 +325,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Introduction to Clustering and Classifiction</h1>
+  <h1 class="title">Introduction to Google Earth Engine</h1>
   <p class="subtitle">ESS 523c</p>
 
 <div class="quarto-title-authors">
@@ -341,37 +341,30 @@ B Steele
 
   <p class="date">April 24, 2023</p>
 </section>
-<section>
-<section id="clustering-methods-overview" class="title-slide slide level1 center">
-<h1>Clustering Methods Overview</h1>
-<aside class="notes">
-<p>Today we’re going to go over clustering methods in relation to remote sensing data. But really this can be broadly applied to many data types.</p>
-<p>Clustering is an <em>unsupervised</em> machine learning method. This just means that we allow the computer to do most of the work in clustering.</p>
-<p>Overall, it’s a process to find <strong>meaningful</strong> structure in a dataset.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
+<section id="initial-set-up" class="title-slide slide level1 center">
+<h1>Initial Set Up</h1>
+<p>Sign up for Google Earth Engine: <a href="https://earthengine.google.com/" class="uri">https://earthengine.google.com/</a>.</p>
+<ul>
+<li><p>use your CSU google email address, unless you’re already using GEE through a different email.</p></li>
+<li><p>You will be prompted to make a home folder. You can’t change this, but you can make more folders.</p></li>
+</ul>
 </section>
-<section id="some-types-of-clustering" class="slide level2">
-<h2>[some] Types of clustering</h2>
+
+<section id="working-in-the-code-editor" class="title-slide slide level1 center">
+<h1>Working in the Code Editor</h1>
+<p>The EE code editor: <a href="https://code.earthengine.google.com/" class="uri">https://code.earthengine.google.com/</a></p>
 <div>
 <ul>
-<li class="fragment"><p>partition clustering</p></li>
-<li class="fragment"><p>hierarchical clustering</p></li>
-<li class="fragment"><p>density-based clustering</p></li>
-<li class="fragment"><p>model-based clustering</p></li>
+<li class="fragment"><p>EE code is written in javascript</p>
+<blockquote>
+<p>print(‘Hello World!’);</p>
+</blockquote></li>
+<li class="fragment"><p>there are many code examples already baked in to the code editor.</p></li>
+<li class="fragment"><p>in the top left area of the screen, navigate to the ‘Examples’ area, then click on the ‘Sentinel’ option</p></li>
 </ul>
 </div>
 <aside class="notes">
-<p>at least that is broadly applicable to this group</p>
+<p>explain syntax here; walk through the Sentinel example</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -384,19 +377,62 @@ B Steele
           display:block!important;
       }</style></aside>
 </section>
-<section id="partition-clustering" class="slide level2">
-<h2>Partition Clustering</h2>
-<p>TL;DR: you define how many classes there are, and clustering prioritizes minimizing the dissimilarity between points.</p>
+
+<section id="filtering-image-collections" class="title-slide slide level1 center">
+<h1>Filtering image collections</h1>
+<p>Lines 27-31:</p>
+<blockquote>
+<p>var collection = ee.ImageCollection(‘COPERNICUS/S2’)</p>
+<blockquote>
+<p>.filterDate(‘2016-01-01’, ‘2016-12-31’)</p>
+<p>// Pre-filter to get less cloudy granules.</p>
+<p>.filter(ee.Filter.lt(‘CLOUDY_PIXEL_PERCENTAGE’, 20))</p>
+<p>.map(maskS2clouds);</p>
+</blockquote>
+</blockquote>
+</section>
+
+<section id="masking-images" class="title-slide slide level1 smaller center">
+<h1>Masking images</h1>
+<p>Masking is a method of filtering an image pixel-by-pixel</p>
+<p>Lines 8 -23:</p>
+<blockquote>
+<p>function maskS2clouds(image) {</p>
+<blockquote>
+<p>var qa = image.select(‘QA60’);</p>
+<p>// Bits 10 and 11 are clouds and cirrus, respectively.</p>
+<p>var cloudBitMask = 1 &lt;&lt; 10;</p>
+<p>var cirrusBitMask = 1 &lt;&lt; 11;</p>
+<p>// Both flags should be set to zero, indicating clear conditions.</p>
+<p>var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(</p>
+<blockquote>
+<p>qa.bitwiseAnd(cirrusBitMask).eq(0));</p>
+</blockquote>
+<p>// Return the masked and scaled data, without the QA bands.</p>
+<p>return image.updateMask(mask).divide(10000)</p>
+<blockquote>
+<p>.select(“B.*”)</p>
+<p>.copyProperties(image, [“system:time_start”]);</p>
+</blockquote>
+</blockquote>
+<p>}</p>
+</blockquote>
+</section>
+
+<section id="displaying-data-in-the-map" class="title-slide slide level1 center">
+<h1>Displaying data in the map</h1>
+<p>Line 36:</p>
+<blockquote>
+<p>Map.addLayer(composite, {bands: [‘B4’, ‘B3’, ‘B2’], min: 0, max: 0.3}, ‘RGB’);</p>
+</blockquote>
 <div class="fragment">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><a href="https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68"><img data-src="https://miro.medium.com/v2/resize:fit:960/1*KrcZK0xYgTa4qFrVr0fO2w.gif"></a></p>
-<p></p><figcaption>k-means clustering example from towardsdatascience.com</figcaption><p></p>
-</figure>
-</div>
+<p>Adding additional layers</p>
+<blockquote>
+<p>Map.addLayer(composite, {bands: [‘B8’, ‘B4’, ‘B3’], min: 0, max: 0.3}, ‘False Color’);</p>
+</blockquote>
 </div>
 <aside class="notes">
-<p>as with most machine learning models, the k-means is an iterative process. The first step are random ‘locations’ in two-dimensional space. then, we iterate to minimizing dissimilarity, where the ‘locations’ are moving over each iteration</p>
+<p>commonly used to show plant/crop health. grey are built up areas, red are veg-heavy areas.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -409,124 +445,12 @@ B Steele
           display:block!important;
       }</style></aside>
 </section>
-<section id="hierarchical-clustering" class="slide level2">
-<h2>Hierarchical clustering</h2>
-<p>TL;DR: you define measures of similarity and either iteratively merge (agglomeritive) or iteratively split (divisive) to create a hierarchy.</p>
-<div class="fragment">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><a href="https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68"><img data-src="https://miro.medium.com/v2/resize:fit:1400/1*ET8kCcPpr893vNZFs8j4xg.gif"></a></p>
-<p></p><figcaption>agglomeritive hierarchical clustering example from towardsdatacience.com</figcaption><p></p>
-</figure>
-</div>
-</div>
-<aside class="notes">
-<p>divisive: if we were dividing this class by hair color - brown/black; blonde; red</p>
-<p>agglomerative: we could do this by height - the folks who are the most similar in height are grouped together first</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-<section id="density-based-clustering" class="slide level2">
-<h2>Density-based clustering</h2>
-<p>TL;DR: computer defines areas of high density separated by areas of low density</p>
-
-<img data-src="https://miro.medium.com/v2/resize:fit:1350/1*tc8UF-h0nQqUfLC8-0uInQ.gif" class="r-stretch quarto-figure-center"><p class="caption">DBSCAN example from towardsdatascience.com</p><aside class="notes">
-<p>not commonly used except in spatial applications and image segmentation.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section></section>
-<section id="another-way-to-think-about-similarity" class="title-slide slide level1 center">
-<h1>Another way to think about similarity…</h1>
-<div class="fragment">
-<p>replace ‘similarity’ with ‘distance’:</p>
-<ul>
-<li class="fragment"><p>you define how many classes there are, and clustering prioritizes minimizing the <strong>distance</strong> between points.</p></li>
-<li class="fragment"><p>you define measures of <strong>distance</strong> and either iteratively merge (agglomeritive) or iteratively split (divisive) to create a hierarchy.</p></li>
-</ul>
-</div>
-</section>
-
-<section id="evaluation-metrics-commonly-used-with-k-means" class="title-slide slide level1 center">
-<h1>Evaluation metrics [commonly used with k-means]</h1>
-<div>
-<ul>
-<li class="fragment"><p>silhouette coefficient</p></li>
-<li class="fragment"><p>Davies-Boudin index / Calinski-Harabasz Index</p></li>
-</ul>
-</div>
-<aside class="notes">
-<p>SC: computing the average distance between data points in the same cluster and the average distance between data points in different clusters (values for -1 to 1, higher the better)</p>
-<p>DBI: measures the average similarity between each cluster and its most similar cluster, while also taking into account the average dissimilarity within each cluster. The lower the value the better</p>
-<p>CHI: measures the ratio of the between-cluster variance to the within-cluster variance. The higher the ratio, the better.</p>
-<p>The focus here is to help define what is <strong>meaningful</strong>.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-
-<section id="the-problem-with-unsupervised-clustering" class="title-slide slide level1 center">
-<h1>The ‘Problem’ with unsupervised clustering</h1>
-
-<img data-src="https://scikit-learn.org/stable/_images/sphx_glr_plot_cluster_comparison_001.png" class="r-stretch quarto-figure-center"><p class="caption">comparison of clustering methods from SciKit Learn</p><aside class="notes">
-<p>what do you notice about the second to last line?</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
-
-<section id="introducing-our-ecological-question" class="title-slide slide level1 center">
-<h1>Introducing our Ecological Question</h1>
-<div class="smaller">
-<ul>
-<li class="fragment"><p>Can we define the area of the Ocean off the coast of California impacted by sediment plumes from the overwhelming (and destrictive) precipitation events of the recent past?</p></li>
-<li class="fragment"><p>how can we consistently label satellite imagery to track sediment plumes?</p></li>
-</ul>
-</div>
-</section>
-
-<section id="section" class="title-slide slide level1 center">
-<h1></h1>
-
-<img data-src="images/california_plume_usgslandsat.jpeg" class="r-stretch quarto-figure-center"><p class="caption">coastal flooding via @USGSLandsat</p></section>
 
 <section id="resources" class="title-slide slide level1 center">
 <h1>Resources</h1>
 <ul>
-<li><a href="https://link.springer.com/chapter/10.1007/978-3-642-03647-7_15">Spatial Clustering <em>in</em> Handbook of Applied Spatial Analysis, J. Aldstadt, 2009</a></li>
+<li><p><a href="https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/composites/">Three-band Sentinel image composite</a> examples</p></li>
+<li><p><a href="https://www.eefabook.org/">Cloud-Based Remote Sensing with Google Earth Engine</a></p></li>
 </ul>
 <div class="footer footer-default">
 
@@ -536,19 +460,19 @@ B Steele
   </div>
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/dist/reveal.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/dist/reveal.js"></script>
   <!-- reveal.js plugins -->
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="0_intro_to_clustering_files/libs/revealjs/plugin/math/math.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="1_intro_to_GEE_files/libs/revealjs/plugin/math/math.js"></script>
   <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
 
   <script>
