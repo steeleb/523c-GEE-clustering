@@ -13,11 +13,49 @@ format:
 editor: visual
 ---
 
+# Quick Satellite Primer
+
+-   satellites are a form of remote sensing (alongside drones, buoys, stream sensors, game cameras, etc.)
+
+-   satellites can be orbital or stationary
+
+-   there is often a trade off between overpass frequency and pixel resolution
+
+# Types of satellite data
+
+-   radar
+
+-   thermal
+
+-   optical
+
+# Types of resolution {.smaller}
+
+-   temporal
+
+-   spatial
+
+-   optical/band
+
+-   radiometric
+
+    ![from Current and near-term advances in Earth observation for ecological applications, Ustin & Middleton, Ecologcal Processs, 2021](images/ls_sen_mod_spectra_ustin_middleton_Eco_Proc_2021.webp){width="800"}
+
+    ::: notes
+    temporal = frequency
+
+    spatial = pixel size
+
+    optical = band width and value
+
+    radiometric = 8? 16? 32? more digits -\> higher resolution
+    :::
+
 # Initial Set Up
 
 Sign up for Google Earth Engine: <https://earthengine.google.com/>.
 
--   use your CSU google email address, unless you're already using GEE through a different email.
+-   use your CSU Google email address, unless you're already using GEE through a different email.
 
 -   You will be prompted to make a home folder. You can't change this, but you can make more folders.
 
@@ -26,64 +64,120 @@ Sign up for Google Earth Engine: <https://earthengine.google.com/>.
 The EE code editor: <https://code.earthengine.google.com/>
 
 ::: incremental
--   EE code is written in javascript
+-   EE code is written in javascript - some syntax is similar to python
 
     > print('Hello World!');
 
--   there are many code examples already baked in to the code editor.
+-   there are many code examples already baked in to the code editor
 
 -   in the top left area of the screen, navigate to the 'Examples' area, then click on the 'Sentinel' option
 :::
 
 ::: notes
-explain syntax here; walk through the Sentinel example
+explain syntax here; walk through the Sentinel cloud example
+
+show how to use .aside(print) to show image collection -- OG image will be too large, need to filter to a specific tile.
+
+> filter(ee.filter.eq('MRGS_TILE', 'tile_here'))
+
+Order of operations! Will need to put this BEFORE grabbing the median value
 :::
+
+# How information is stored in GEE
+
+-   satellite images are stored in 'tiles' which are what comprise 'ee.ImageCollection()' data sets
+
+-   these tiles have tile-level (or scene-level) metadata and pixel-level data
+
+    -   see [the Sentinel landing page for GEE](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED)
+
+        -   'Bands' - pixel level metadata and data
+
+        -   'Image Properties' - tile-level metadata and data
 
 # Filtering image collections
 
 Lines 27-31:
 
-> var collection = ee.ImageCollection('COPERNICUS/S2')
->
-> > .filterDate('2016-01-01', '2016-12-31')
-> >
-> > // Pre-filter to get less cloudy granules.
-> >
-> > .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
-> >
-> > .map(maskS2clouds);
+```{js}
+var collection = ee.ImageCollection('COPERNICUS/S2')
+    .filterDate('2016-04-15', '2016-06-15')
+    // Pre-filter to get less cloudy granules.
+    .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+    .map(maskS2clouds);
+```
+
+::: notes
+.filter(ee.Filter.eq('MGRS_TILE', '13TDF'))
+:::
 
 # Masking images {.smaller}
 
-Masking is a method of filtering an image pixel-by-pixel
+::: r-fit-text
+Masking is a method of filtering an image pixel-by-pixel (lines 8 -23):
+
+```{js}
+function maskS2clouds(image) {
+  var qa = image.select('QA60')
+  // Bits 10 and 11 are clouds and cirrus, respectively.
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+  // Both flags should be set to zero, indicating clear conditions.
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(
+             qa.bitwiseAnd(cirrusBitMask).eq(0))
+  // Return the masked and scaled data, without the QA bands.
+  return image.updateMask(mask).divide(10000)
+      .select("B.*")
+      .copyProperties(image, ["system:time_start"])
+}
+```
+:::
+
+# A bit about bits
+
+Bits are where data are stored for raw satellite images.
+
+-   bits are a form of resolution for band data
+
+    -   8 bit vs. 16 bit vs. 32 bit
+
+-   bits are also a form of metadata for pixels
+
+    -   See 'bitmask for QA60' in the Sentinel landing page
+
+::: notes
+remember, bits are also a form of resolution!
+:::
+
+# Counting by bits
+
+[![from Wikipedia 'finger binary'](images/finger_binary_wikipedia.png)](https://en.wikipedia.org/wiki/Finger_binary#:~:text=Finger%20binary%20is%20a%20system,or%20210%E2%88%921%20respectively.)
+
+Bits are counted from right to left.
+
+Masks are bit values, too - only 0's and 1's.
+
+# Masking images {.smaller}
+
+3 Masking is a method of filtering an image pixel-by-pixel
 
 Lines 8 -23:
 
-> function maskS2clouds(image) {
->
-> > var qa = image.select('QA60');
-> >
-> > // Bits 10 and 11 are clouds and cirrus, respectively.
-> >
-> > var cloudBitMask = 1 \<\< 10;
-> >
-> > var cirrusBitMask = 1 \<\< 11;
-> >
-> > // Both flags should be set to zero, indicating clear conditions.
-> >
-> > var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(
-> >
-> > > qa.bitwiseAnd(cirrusBitMask).eq(0));
-> >
-> > // Return the masked and scaled data, without the QA bands.
-> >
-> > return image.updateMask(mask).divide(10000)
-> >
-> > > .select("B.\*")
-> > >
-> > > .copyProperties(image, \["system:time_start"\]);
->
-> }
+```{js}
+function maskS2clouds(image) {
+  var qa = image.select('QA60')
+  // Bits 10 and 11 are clouds and cirrus, respectively.
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+  // Both flags should be set to zero, indicating clear conditions.
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(
+             qa.bitwiseAnd(cirrusBitMask).eq(0))
+  // Return the masked and scaled data, without the QA bands.
+  return image.updateMask(mask).divide(10000)
+      .select("B.*")
+      .copyProperties(image, ["system:time_start"])
+}
+```
 
 # Displaying data in the map
 
@@ -99,6 +193,8 @@ Adding additional layers
 
 ::: notes
 commonly used to show plant/crop health. grey are built up areas, red are veg-heavy areas.
+
+Could use false color to show the differences between FoCo and the Pac-NW, or the Northeast during green-up and leaf-off.
 :::
 
 # Getting back to our ecological question
@@ -106,6 +202,8 @@ commonly used to show plant/crop health. grey are built up areas, red are veg-he
 Go to [https://github.com/steeleb/523c-GEE-clustering](https://github.com/steeleb/523c-GEE-clusteringhttps://github.com/steeleb/523c-GEE-clustering)
 
 # Resources
+
+-   [Bitmask basics from Spatial Thoughts](https://spatialthoughts.com/2021/08/19/qa-bands-bitmasks-gee/)
 
 -   [Three-band Sentinel image composite](https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/composites/) examples
 
