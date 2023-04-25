@@ -194,7 +194,7 @@ var addLatLon = function(f) {
   Export.table.toDrive({
     collection: data,
     description: 'monterey_bay_sed_labels',
-    folder: '523_monterey_bay',
+    folder: '523_monterey_bay'
     fileNamePrefix: 'monterey_bay_sed_labels_'+id,
     fileFormat: 'csv'});
   
