@@ -58,6 +58,7 @@ var acc_values_CART = confusionMatrixCART
   .accuracy();
 print("CART Confusion Overall Accuracy: ", acc_values_CART);
 
+/*
 // Train the RF model
 var trainedRF = ee.Classifier.smileRandomForest(10).train({
   features: training,
@@ -75,6 +76,6 @@ confusionMatrixRF.aside(print);
 var acc_values_RF = confusionMatrixRF
   .accuracy();
 print("RF Confusion Overall Accuracy: ", acc_values_RF);
-
+*/
 
 
