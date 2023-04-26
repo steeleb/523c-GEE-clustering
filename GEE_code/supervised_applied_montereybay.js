@@ -100,14 +100,94 @@ print("CART Confusion Overall Accuracy: ", acc_values_CART);
 var applyCART = function(image) {
   // Select the bands that correspond to the input features of the CART model
   var imageFeatures = image.select(inputFeatures);
-  
+  var sys_in = image.get('system:index');
   // Classify the image using the trained CART model
-  var classifiedImage = imageFeatures.classify(trainedCART);
-  
+  var classifiedImage = imageFeatures
+    .classify(trainedCART)
+    .set('system:index', sys_in);
   return classifiedImage;
 };
 
 // apply the function to the 5 images
 var mb_sen2_cart = mb_sen2.map(applyCART);
 
+//////////////////////////////////////
+// Visualize results                //
+//////////////////////////////////////
 
+var og_viz = {
+  min: 0.0,
+  max: 0.3,
+  bands: ['B4', 'B3', 'B2'],
+};
+var palette = ['0072B2', 'E69F00', '009E73', 'F0E442'];
+var class_viz = {
+  min: 0,
+  max: 3,
+  palette: palette
+};
+
+var dropdown = ui.Select({
+  items: sceneList,
+  onChange: function(selected) {
+    Map.layers().reset();
+    var og_img = mb_sen2.filter(ee.Filter.eq('system:index', selected));
+    var class_img = mb_sen2_cart.filter(ee.Filter.eq('system:index', selected));
+    Map.addLayer(og_img, og_viz, 'Original Image');
+    Map.addLayer(class_img, class_viz, 'Classified Image');
+  }
+});
+
+dropdown.style().set({
+  position: 'top-right'
+});
+
+// Add the dropdown to the map
+Map.add(dropdown);
+
+// Create a custom legend
+var legend = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '8px 15px',
+    width: '250px'
+  }
+});
+
+// Create the legend title
+var legendTitle = ui.Label({
+  value: 'Class Legend',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+  }
+});
+
+// Add the title to the legend
+legend.add(legendTitle);
+
+// Loop through the class labels and colors to add them to the legend
+for (var i = 0; i < classValues.length; i++) {
+  var label = ui.Label({
+    value: classValues[i],
+    style: {
+      fontSize: '14px',
+      margin: '0 0 4px 8px',
+      padding: '0'
+    }
+  });
+  var colorBox = ui.Label({
+    style: {
+      backgroundColor: palette[i],
+      padding: '6px',
+      margin: '0 0 4px 0',
+    }
+  });
+  legend.add(colorBox);
+  legend.add(label);
+}
+
+// Add the legend to the map
+Map.add(legend);
